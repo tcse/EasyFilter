@@ -2,7 +2,7 @@
 [![Documentation](https://img.shields.io/badge/Documentation-Link-blue.svg?style=flat-square)](https://punpun.name/doc/easy-filter.html)
 ![version](https://img.shields.io/badge/version-1.0-green.svg?style=flat-square "Version")
 ![DLE](https://img.shields.io/badge/DLE-13.x-red.svg?style=flat-square "DLE Version")
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/punpun1/EasyFilter/blob/master/LICENSE)
+[![CC BY-NC-SA License](https://img.shields.io/badge/license-CC_BY--NC--SA_3.0-blue.svg?style=flat-square)](https://github.com/punpun1/EasyFilter/blob/master/LICENSE)
 
 **Модуль Easy Filter** поможет реализовать фильтр по дополнительным полям. Модуль полностью работает на AJAX, никакой перезагрузки страницы. А так же имеет базовые настройки.
 # Требования к системе
