@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Easy Filter by Punpun</name>
+	<description>Реализация простого фильтра по дополнительным поля новостей</description>
+	<icon></icon>
+	<version>1.0</version>
+	<dleversion>13.0</dleversion>
+	<versioncompare>greater</versioncompare>
+	<mysqlinstall><![CDATA[INSERT INTO `{prefix}_admin_sections` (`name`, `title`, `descr`, `icon`, `allow_groups`) VALUES ('easy_filter', 'Easy Filter', 'Настройки фильтра', '', '1')]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[DELETE FROM `{prefix}_admin_sections` WHERE name='easy_filter']]></mysqldelete>
+</dleplugin>
