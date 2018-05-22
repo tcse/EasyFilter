@@ -262,8 +262,8 @@ if (trim($easy_filter_config['news']) != '') {
 
 $thisdate = date("Y-m-d H:i:s", time());
 if ($config['no_date'] && !$config['news_future']) {
-	$where[] = " AND date < '" . $thisdate . "'";
-	$where_all[] = " AND date < '" . $thisdate . "'";
+	$where[] = "date < '" . $thisdate . "'";
+	$where_all[] = "date < '" . $thisdate . "'";
 }
 
 $where = implode(' AND ', $where);
