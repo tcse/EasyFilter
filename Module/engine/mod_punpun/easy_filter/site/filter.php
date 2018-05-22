@@ -27,7 +27,7 @@ if ($where_all) {
 
 	$thisdate = date("Y-m-d H:i:s", time());
 	if ($config['no_date'] && !$config['news_future']) {
-		$where_all[] = " AND date < '" . $thisdate . "'";
+		$where_all[] = "date < '" . $thisdate . "'";
 	}
 	
 	$where_all = ' AND ' . implode(' AND ', $where_all);
