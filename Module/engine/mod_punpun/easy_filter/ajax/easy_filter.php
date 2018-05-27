@@ -1,4 +1,17 @@
 <?php
+/*
+=====================================================
+Easy Filter 1.1
+-----------------------------------------------------
+Author: PunPun
+-----------------------------------------------------
+Site: http://punpun.name/
+-----------------------------------------------------
+Copyright (c) 2018 PunPun
+=====================================================
+Данный код защищен авторскими правами
+*/
+
 @error_reporting(E_ALL ^ E_WARNING ^ E_DEPRECATED ^ E_NOTICE);
 @ini_set('error_reporting', E_ALL ^ E_WARNING ^ E_DEPRECATED ^ E_NOTICE);
 @ini_set('display_errors', true);
@@ -205,6 +218,7 @@ include ENGINE_DIR . '/mod_punpun/easy_filter/config/easy_filter_config.php';
 
 $form_field_arr_temp = $form_field_arr;
 $order_by = [];
+$where = [];
 
 foreach ($form_field_arr as $key => &$value) {
 	if (substr_count($value, ',')) {
@@ -262,11 +276,15 @@ if (trim($easy_filter_config['news']) != '') {
 
 $thisdate = date("Y-m-d H:i:s", time());
 if ($config['no_date'] && !$config['news_future']) {
-	$where[] = " AND date < '" . $thisdate . "'";
-	$where_all[] = " AND date < '" . $thisdate . "'";
+	$where[] = "date < '" . $thisdate . "'";
+	$where_all[] = "date < '" . $thisdate . "'";
 }
 
-$where = implode(' AND ', $where);
+if ($where) {
+	$where = ' AND ' . implode(' AND ', $where);
+} else {
+	unset($where);
+}
 
 $all_news = isset($_POST['all_news']) && intval($_POST['all_news']) > 0 ? intval($_POST['all_news']) : false;
 $now_news = isset($_POST['now_news']) && intval($_POST['now_news']) > 0 ? intval($_POST['now_news']) : 0;
@@ -277,7 +295,7 @@ if ($easy_filter_config['allow_cache'] == 1) {
 }
 
 if (!$all_news) {
-	$count_news = $db->super_query("SELECT COUNT(*) as count FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' AND " . $where);
+	$count_news = $db->super_query("SELECT COUNT(*) as count FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1'" . $where);
 	$all_news = $count_news['count'];
 }
 
@@ -301,7 +319,7 @@ if ($order_by) {
 }
 
 $easy_filter_config['count_first'] = intval($easy_filter_config['count_first']) > 0 ? intval($easy_filter_config['count_first']) : 10;
-$sql_result = $db->query("SELECT p.id, p.autor, p.date, p.short_story, p.full_story, p.xfields, p.title, p.category, p.alt_name, p.comm_num, p.allow_comm, p.fixed, p.tags, e.news_read, e.allow_rate, e.rating, e.vote_num, e.votes, e.view_edit, e.editdate, e.editor, e.reason FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' AND {$where} {$order_by_sql} LIMIT {$now_news},{$easy_filter_config['count_first']}");
+$sql_result = $db->query("SELECT p.id, p.autor, p.date, p.short_story, p.full_story, p.xfields, p.title, p.category, p.alt_name, p.comm_num, p.allow_comm, p.fixed, p.tags, e.news_read, e.allow_rate, e.rating, e.vote_num, e.votes, e.view_edit, e.editdate, e.editor, e.reason FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' {$where} {$order_by_sql} LIMIT {$now_news},{$easy_filter_config['count_first']}");
 
 $now_news = $now_news != 0 ? $now_news + $easy_filter_config['count_first'] : 0;
 
@@ -347,4 +365,5 @@ $data_output['js_form'] = $js_form;
 
 $data_output = json_encode($data_output);
 echo $data_output;
+
 ?>

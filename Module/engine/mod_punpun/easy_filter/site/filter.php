@@ -1,4 +1,17 @@
 <?php
+/*
+=====================================================
+Easy Filter 1.1
+-----------------------------------------------------
+Author: PunPun
+-----------------------------------------------------
+Site: http://punpun.name/
+-----------------------------------------------------
+Copyright (c) 2018 PunPun
+=====================================================
+Данный код защищен авторскими правами
+*/
+
 defined('DATALIFEENGINE') || die("IF U DONT GO BACK I WILL RAPE U!");
 
 $xf = xfieldsload();
@@ -7,7 +20,7 @@ $tpl_block = file_get_contents(TEMPLATE_DIR . '/mod_punpun/easy_filter/filter_bl
 $tpl_value = file_get_contents(TEMPLATE_DIR . '/mod_punpun/easy_filter/filter_value.tpl');
 
 if ($where_all) {
-	$where_all = ' AND ' . implode(' AND ', $where_all);
+	$sql_where = ' AND ' . implode(' AND ', $where_all);
 } else {
 	include ENGINE_DIR . '/mod_punpun/easy_filter/config/easy_filter_config.php';
 
@@ -27,13 +40,16 @@ if ($where_all) {
 
 	$thisdate = date("Y-m-d H:i:s", time());
 	if ($config['no_date'] && !$config['news_future']) {
-		$where_all[] = " AND date < '" . $thisdate . "'";
+		$where_all[] = "date < '" . $thisdate . "'";
 	}
-	
-	$where_all = ' AND ' . implode(' AND ', $where_all);
+	if ($where_all) {
+		$sql_where = ' AND ' . implode(' AND ', $where_all);
+	} else {
+		$sql_where = '';
+	}
 }
 
-$sql = $db->query("SELECT xfields FROM " . PREFIX . "_post WHERE xfields!='' AND approve='1' {$where_all}");
+$sql = $db->query("SELECT xfields FROM " . PREFIX . "_post WHERE xfields!='' AND approve='1' {$sql_where}");
 $xf_data = [];
 $xf_count = [];
 
@@ -44,10 +60,11 @@ while ($row = $db->get_row($sql)) {
 		array_walk($xf_array, function($value, $key) use(&$xf_data, $keys, &$xf_count)
 		{
 			$v = trim($value);
-			if (!$xf_data[$keys][$v]) {
-				$xf_data[$keys][$v] = $v;
+			$v_key = mb_strtolower($v, "UTF-8");
+			if (!$xf_data[$keys][$v_key]) {
+				$xf_data[$keys][$v_key] = $v;
 			}
-			$xf_count[$v]++;
+			$xf_count[$v_key]++;
 		});
 	}
 }
@@ -66,7 +83,7 @@ if ($where) {
 			$xf_array = explode(",", $xf_value);
 			array_walk($xf_array, function($value) use(&$xf_count_sort)
 			{
-				$v = trim($value);
+				$v = mb_strtolower(trim($value), "UTF-8");
 				$xf_count_sort[$v]++;
 			});
 		}
@@ -131,4 +148,5 @@ $tpl_block = preg_replace("#\\[(.+?)\\](.*?)\\[/\\1\\]#is", "", $tpl_block);
 if (!$where) {
 	echo $tpl_block;
 }
+
 ?>

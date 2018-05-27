@@ -1,4 +1,17 @@
 <?php
+/*
+=====================================================
+Easy Filter 1.1
+-----------------------------------------------------
+Author: PunPun
+-----------------------------------------------------
+Site: http://punpun.name/
+-----------------------------------------------------
+Copyright (c) 2018 PunPun
+=====================================================
+Данный код защищен авторскими правами
+*/
+
 @error_reporting(E_ALL ^ E_WARNING ^ E_DEPRECATED ^ E_NOTICE);
 @ini_set('error_reporting', E_ALL ^ E_WARNING ^ E_DEPRECATED ^ E_NOTICE);
 @ini_set('display_errors', true);

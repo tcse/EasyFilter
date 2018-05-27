@@ -1,6 +1,18 @@
 <?PHP
+/*
+=====================================================
+Easy Filter 1.1
+-----------------------------------------------------
+Author: PunPun
+-----------------------------------------------------
+Site: http://punpun.name/
+-----------------------------------------------------
+Copyright (c) 2018 PunPun
+=====================================================
+Данный код защищен авторскими правами
+*/
 
-if( !defined('DATALIFEENGINE') OR !defined('LOGGED_IN')) {
+if (!defined('DATALIFEENGINE') OR !defined('LOGGED_IN')) {
 	header("HTTP/1.1 403 Forbidden");
 	header('Location: ../../');
 	die("Hacking attempt!");
