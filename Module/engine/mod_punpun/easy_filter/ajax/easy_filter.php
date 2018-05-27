@@ -365,9 +365,5 @@ $data_output['js_form'] = $js_form;
 
 $data_output = json_encode($data_output);
 echo $data_output;
-<<<<<<< HEAD
 
 ?>
-=======
-?>
->>>>>>> master

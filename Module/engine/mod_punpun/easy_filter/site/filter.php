@@ -41,14 +41,12 @@ if ($where_all) {
 	$thisdate = date("Y-m-d H:i:s", time());
 	if ($config['no_date'] && !$config['news_future']) {
 		$where_all[] = "date < '" . $thisdate . "'";
-<<<<<<< HEAD
 	}
+	
 	if ($where_all) {
 		$sql_where = ' AND ' . implode(' AND ', $where_all);
 	} else {
 		$sql_where = '';
-=======
->>>>>>> master
 	}
 }
 
@@ -151,9 +149,5 @@ $tpl_block = preg_replace("#\\[(.+?)\\](.*?)\\[/\\1\\]#is", "", $tpl_block);
 if (!$where) {
 	echo $tpl_block;
 }
-<<<<<<< HEAD
 
 ?>
-=======
-?>
->>>>>>> master
