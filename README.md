@@ -1,6 +1,6 @@
 # Easy Filter
 [![Documentation](https://img.shields.io/badge/Documentation-Link-blue.svg?style=flat-square)](https://punpun.name/doc/easy-filter.html)
-![version](https://img.shields.io/badge/version-1.1-green.svg?style=flat-square "Version")
+![version](https://img.shields.io/badge/version-2.0.0-green.svg?style=flat-square "Version")
 ![DLE](https://img.shields.io/badge/DLE-13.x-red.svg?style=flat-square "DLE Version")
 [![CC BY-NC-SA License](https://img.shields.io/badge/license-CC_BY--NC--SA_3.0-blue.svg?style=flat-square)](https://github.com/punpun1/EasyFilter/blob/master/LICENSE)
 
@@ -8,7 +8,7 @@
 # Требования к системе
 * Версия DLE: 13.0 и выше
 * Поддерживаемая кодировка: UTF-8
-* Версия php: 5.4 и выше
+* Версия php: 5.6 и выше
 
 # Лицензия:
 Данное программное обеспечение издается по лицензии CC Attribution — Noncommercial — Share Alike.<br/>

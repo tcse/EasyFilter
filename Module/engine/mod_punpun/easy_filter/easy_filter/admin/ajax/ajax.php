@@ -1,7 +1,7 @@
 <?php
 /*
 =====================================================
-Easy Filter 1.1
+Easy Filter 2.0.0
 -----------------------------------------------------
 Author: PunPun
 -----------------------------------------------------
@@ -44,65 +44,47 @@ if ($member_id['user_group'] != 1) {
 	exit;
 }
 
-function ClearString ($value, $db)
-{
-	$value = $db->safesql(trim(stripslashes(strip_tags($value))));
-	return $value;
-}
-
 include ENGINE_DIR . '/mod_punpun/easy_filter/language/easy_filter.lng';
 
-$action = isset($_POST['action']) ? ClearString($_POST['action'], $db) : false;
+$action = isset($_POST['action']) ? strip_tags(trim($_POST['action'])) : false;
 
 if ($action == 'cache') {
 	clear_cache(['news_easy_filter']);
-	echo json_encode(array("head" => $easy_filter_lang[24], "text" => $easy_filter_lang[28]));
-} elseif ($action == 'option') {
+	echo json_encode(["head" => $easy_filter_lang[24], "text" => $easy_filter_lang[28], "icon" => "success"]);
+} elseif ($action == 'options') {
 	$data_form = isset($_POST['data_form']) ? $_POST['data_form'] : false;
 	if ($data_form) {
-		foreach ($data_form as $key => $value) {
-			if ($value['name'] == "category[]") {
-				$category[] = $value['value'];
-			} elseif ($value['name'] == "sort[]") {
-				$sort[] = $value['value'];
-			} else {
-				$name_key = str_replace(array("save_con[", "]"), "", $value['name']);
-				$save_con[$name_key] = $value['value'];
-			}
-		}
+		parse_str($data_form, $array_post);
 
-		if ($category) {
-			foreach ($category as $index => $val) {
-				$category[$index] = ClearString($val, $db);
-			}
-			$category = implode(',', $category);
-		} else {
-			$category = '';
-		}
-
-		if ($sort) {
-			foreach ($sort as $index => $val) {
-				$sort[$index] = ClearString($val, $db);
-			}
-			$sort = implode(',', $sort);
-		} else {
-			$sort = '';
-		}
-
-		$handler = fopen(ENGINE_DIR . '/mod_punpun/easy_filter/config/easy_filter_config.php', "w");
-		fwrite($handler, "<?PHP \n\n//Easy Filter by PunPun\n\n\$easy_filter_config = [\n\n");
-		fwrite($handler, "'sort' => '{$sort}',\n\n");
-		fwrite($handler, "'category' => '{$category}',\n\n");
-		foreach ($save_con as $name => $value) {
-			if ($name != 'action') {
-				$clear_value =  $db->safesql(trim(strip_tags($value)));
-				fwrite($handler, "'{$name}' => \"{$clear_value}\",\n\n");
-			}
-		}
-		fwrite($handler, "];\n\n?>");
+		$handler = fopen(ENGINE_DIR . '/mod_punpun/easy_filter/config/easy_filter.php', "w");
+		fwrite($handler, "<?PHP \n\n//Easy Filter by PunPun\n\n\$easy_filter_config = \n");
+		fwrite($handler, var_export($array_post, true));
+		fwrite($handler, ";\n\n?>");
 		fclose($handler);
 
-		echo json_encode(array("head" => $easy_filter_lang[24], "text" => $easy_filter_lang[25]));
+		echo json_encode(["head" => $easy_filter_lang[24], "text" => $easy_filter_lang[25], "icon" => "success"]);
+	}
+} elseif ($action == 'filter') {
+	$data_form = isset($_POST['data_form']) ? $_POST['data_form'] : false;
+	if ($data_form) {
+		parse_str($data_form, $array_post);
+        
+        $block_filter = [];
+        foreach ($array_post as $key => $value) {
+            if ($value['on'] == 1) {
+                $block_filter[$key] = ['type' => intval($value['type']), 'on' => 1];
+            }
+        }
+        
+        if ($block_filter) {
+            $handler = fopen(ENGINE_DIR . '/mod_punpun/easy_filter/config/filter_block.php', "w");
+            fwrite($handler, "<?PHP \n\n//Easy Filter by PunPun\n\n\$filter_block = \n");
+            fwrite($handler, var_export($block_filter, true));
+            fwrite($handler, ";\n\n?>");
+            fclose($handler);
+        }
+
+		echo json_encode(["head" => $easy_filter_lang[24], "text" => $easy_filter_lang[25], "icon" => "success"]);
 	}
 }
 ?>

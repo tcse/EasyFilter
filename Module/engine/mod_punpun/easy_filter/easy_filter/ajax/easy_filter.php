@@ -261,17 +261,17 @@ $where_all = [];
 
 if (trim($easy_filter_config['category']) != '') {
 	if ($config['allow_multi_category']) {
-		$where[] = "category NOT REGEXP '[[:<:]](" . str_replace(',', '|', $easy_filter_config['category']) . ")[[:>:]]'";
-		$where_all[] = "category NOT REGEXP '[[:<:]](" . str_replace(',', '|', $easy_filter_config['category']) . ")[[:>:]]'";
+		$where[] = "category NOT REGEXP '[[:<:]](" . implode('|', $easy_filter_config['category']) . ")[[:>:]]'";
+		$where_all[] = "category NOT REGEXP '[[:<:]](" . implode('|', $easy_filter_config['category']) . ")[[:>:]]'";
 	} else {
-		$where[] = "category NOT IN('" . str_replace(',', "','", $easy_filter_config['category']) . "')";
-		$where_all[] = "category NOT IN('" . str_replace(',', "','", $easy_filter_config['category']) . "')";
+		$where[] = "category NOT IN('" . implode("','", $easy_filter_config['category']) . "')";
+		$where_all[] = "category NOT IN('" . implode("','", $easy_filter_config['category']) . "')";
 	}
 }
 
-if (trim($easy_filter_config['news']) != '') {
-	$where[] = "id NOT IN('" . str_replace(',', "','", $easy_filter_config['news']) . "')";
-	$where_all[] = "id NOT IN('" . str_replace(',', "','", $easy_filter_config['news']) . "')";
+if (trim($easy_filter_config['options']['not_news']) != '') {
+	$where[] = "id NOT IN('" . str_replace(',', "','", $easy_filter_config['options']['not_news']) . "')";
+	$where_all[] = "id NOT IN('" . str_replace(',', "','", $easy_filter_config['options']['not_news']) . "')";
 }
 
 $thisdate = date("Y-m-d H:i:s", time());
@@ -289,11 +289,6 @@ if ($where) {
 $all_news = isset($_POST['all_news']) && intval($_POST['all_news']) > 0 ? intval($_POST['all_news']) : false;
 $now_news = isset($_POST['now_news']) && intval($_POST['now_news']) > 0 ? intval($_POST['now_news']) : 0;
 
-if ($easy_filter_config['allow_cache'] == 1) {
-	$config['allow_cache'] = 1;
-	dle_cache('news_easy_filter', $where . $config['skin'] . $now_news, true);
-}
-
 if (!$all_news) {
 	$count_news = $db->super_query("SELECT COUNT(*) as count FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1'" . $where);
 	$all_news = $count_news['count'];
@@ -301,16 +296,15 @@ if (!$all_news) {
 
 if ($order_by) {
 	$order_by_sql = ' ORDER BY ' . implode(', ', $order_by);
-} elseif (trim($easy_filter_config['sort']) != '') {
-	$sort_default = explode(',', $easy_filter_config['sort']);
-	$count_sort = count($sort_default);
+} elseif ($easy_filter_config['sort'] != '') {
+	$count_sort = count($easy_filter_config['sort']);
 	$sort_array = [];
 	for ($i = 0; $i < $count_sort; $i++) {
-		if (strpos($sort_default[$i], 'xf_') !== false) {
-			$sort_default[$i] = substr_replace($sort_default[$i], '', 0, 3);
-			$sort_array[] = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$sort_default[$i]}|', -1), '||', 1)) " . (($easy_filter_config['sort_by']!='') ? $easy_filter_config['sort_by'] : 'DESC');;
+		if (strpos($easy_filter_config['sort'][$i], 'xf_') !== false) {
+			$easy_filter_config['sort'][$i] = substr_replace($easy_filter_config['sort'][$i], '', 0, 3);
+			$sort_array[] = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$easy_filter_config['sort'][$i]}|', -1), '||', 1)) " . (($easy_filter_config['sort_by']!='') ? $easy_filter_config['sort_by'] : 'DESC');;
 		} else {
-			$sort_array[] = $sort_default[$i] . (($easy_filter_config['sort_by']!='') ? ' ' . $easy_filter_config['sort_by'] : ' DESC');
+			$sort_array[] = $easy_filter_config['sort'][$i] . (($easy_filter_config['sort_by']!='') ? ' ' . $easy_filter_config['sort_by'] : ' DESC');
 		}
 	}
 	$order_by_sql = " ORDER BY " . implode(', ', $sort_array);
@@ -318,10 +312,10 @@ if ($order_by) {
 	$order_by_sql = ' ORDER BY p.date DESC';
 }
 
-$easy_filter_config['count_first'] = intval($easy_filter_config['count_first']) > 0 ? intval($easy_filter_config['count_first']) : 10;
-$sql_result = $db->query("SELECT p.id, p.autor, p.date, p.short_story, p.full_story, p.xfields, p.title, p.category, p.alt_name, p.comm_num, p.allow_comm, p.fixed, p.tags, e.news_read, e.allow_rate, e.rating, e.vote_num, e.votes, e.view_edit, e.editdate, e.editor, e.reason FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' {$where} {$order_by_sql} LIMIT {$now_news},{$easy_filter_config['count_first']}");
+$easy_filter_config['options']['news_limit'] = intval($easy_filter_config['options']['news_limit']) > 0 ? intval($easy_filter_config['options']['news_limit']) : 10;
+$sql_result = $db->query("SELECT p.id, p.autor, p.date, p.short_story, p.full_story, p.xfields, p.title, p.category, p.alt_name, p.comm_num, p.allow_comm, p.fixed, p.tags, e.news_read, e.allow_rate, e.rating, e.vote_num, e.votes, e.view_edit, e.editdate, e.editor, e.reason FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' {$where} {$order_by_sql} LIMIT {$now_news},{$easy_filter_config['options']['news_limit']}");
 
-$now_news = $now_news != 0 ? $now_news + $easy_filter_config['count_first'] : 0;
+$now_news = $now_news != 0 ? $now_news + $easy_filter_config['options']['news_limit'] : 0;
 
 $allow_active_news = true;
 $tpl = new dle_template();
@@ -344,11 +338,7 @@ if (trim($tpl->result["content"]) != "") {
 	$tpl->result["content"] = PHP_EOL . "<!-- Easy Filter by PunPun.name -->" . PHP_EOL . $tpl->result["content"] . PHP_EOL . "<!-- Easy Filter by PunPun.name -->" . PHP_EOL;
 }
 
-if ($easy_filter_config['allow_cache'] == 1) {
-	create_cache('news_easy_filter', $tpl->result["content"], $where . $config['skin'] . $now_news, true);
-}
-
-if ($all_news > $easy_filter_config['count_first'] && $now_news == 0) {
+if ($all_news > $easy_filter_config['options']['news_limit'] && $now_news == 0) {
 $tpl->result['content'] .=<<<HTML
 <div class="bottom-nav ignore-select" id="bottom-nav">
 	<div class="nav-load" id="nav-load"><div>Загрузить еще</div></div>
@@ -360,7 +350,7 @@ $tpl->result['content'] = str_replace('{THEME}', $config['http_home_url'] . 'tem
 $data_output['news'] = $tpl->result['content'];
 $data_output['now_news'] = $now_news;
 $data_output['all_news'] = $all_news;
-$data_output['limit'] = $easy_filter_config['count_first'];
+$data_output['limit'] = $easy_filter_config['options']['news_limit'];
 $data_output['js_form'] = $js_form;
 
 $data_output = json_encode($data_output);

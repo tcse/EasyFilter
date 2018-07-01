@@ -3,7 +3,7 @@
 	<name>Easy Filter by Punpun</name>
 	<description>Реализация простого фильтра по дополнительным поля новостей</description>
 	<icon></icon>
-	<version>1.0</version>
+	<version>2.0.0</version>
 	<dleversion>13.0</dleversion>
 	<versioncompare>greater</versioncompare>
 	<mysqlinstall><![CDATA[INSERT INTO `{prefix}_admin_sections` (`name`, `title`, `descr`, `icon`, `allow_groups`) VALUES ('easy_filter', 'Easy Filter', 'Настройки фильтра', '', '1')]]></mysqlinstall>
