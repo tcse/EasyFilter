@@ -12,7 +12,7 @@ Copyright (c) 2018 PunPun
 Данный код защищен авторскими правами
 */
 
-defined('DATALIFEENGINE') || die("IF U DONT GO BACK I WILL RAPE U!");
+defined('DATALIFEENGINE') || die("go your way stalker");
 
 $block_design = <<<HTML
 <div class="fb-sect-name">{name}</div>
@@ -35,6 +35,24 @@ $design_form[3] = <<<HTML
 <select name="{name}" {multiple}>
     <option value=""> - </option>
     [value]<option value="{value}" data-key='{key}-{value}' {disabled} [check]selected[/check]> {value} ({count})</option>[/value]
+    {value}
+</select>
+HTML;
+
+$design_form['dle_sort_1'] = <<<HTML
+[value]<label data-key="{key}-{value}"><input type="checkbox" value="{value}" name="{name}" [check]checked[/check]> {value}</label> [/value]
+{value}
+HTML;
+
+$design_form['dle_sort_2'] = <<<HTML
+[value]<label data-key="{key}-{value}"><input type="radio" value="{value}" name="{name}" [check]checked[/check]> {value}</label> [/value]
+{value}
+HTML;
+
+$design_form['dle_sort_3'] = <<<HTML
+<select name="{name}" {multiple}>
+    <option value=""> - </option>
+    [value]<option value="{value}" data-key='{key}-{value}' [check]selected[/check]> {value}</option>[/value]
     {value}
 </select>
 HTML;

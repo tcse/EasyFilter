@@ -13,7 +13,7 @@ Copyright (c) 2018 PunPun
 */
 
 if (!defined('DATALIFEENGINE') OR !defined('LOGGED_IN')) {
-	die("Hacking attempt!");
+	die("go your way stalker");
 }
 
 include ENGINE_DIR . "/mod_punpun/easy_filter/config/filter_block.php";
@@ -23,12 +23,14 @@ $count_all_xfield = count($all_xfield);
 
 $xfield = [];
 
+for ($i = 0; $i < $count_all_xfield; $i++) {
+	$xfield_sort['xf_' . $all_xfield[$i][0]] = $all_xfield[$i][1];
+}
+
 $sort_array = ['p.date' => $this->module_lang[11], 'e.editdate' => $this->module_lang[12], 'e.rating' => $this->module_lang[13], 'p.comm_num' => $this->module_lang[14], 'e.news_read' => $this->module_lang[15]];
 if ($xfield_sort) {
 	$sort_array = $sort_array + $xfield_sort;
 }
-
-$category = CategoryNewsSelection((empty($this->module_config['category']) ? 0 : explode(',', $this->module_config['category'])));
 
 echo <<<HTML
 <style>
@@ -81,13 +83,73 @@ echo <<<HTML
 HTML;
 }
 echo <<<HTML
+<tr>
+    <td>
+        <h6>{$this->module_lang[40]}</h6>
+    </td>
+    <td class="text-center">
+HTML;
+    echo $this->select_sortForm(
+        ['dle_sort[option][]', $sort_array, true, $filter_block['dle_sort']['option'], true, false, $this->module_lang[22]]
+    );
+    echo "<br><br>";
+    echo $this->selectForm([
+        "dle_sort[type]", 
+        [
+            1 => $this->module_lang[30],
+            2 => $this->module_lang[31],
+            3 => $this->module_lang[32],
+            4 => $this->module_lang[33]
+        ], 
+        true, 
+        $filter_block['dle_sort']['type']]
+    );
+    $checked = '';
+    if ($filter_block['dle_sort']['on'] == 1) {
+        $checked = 'checked';
+    }
+echo <<<HTML
+    </td>
+    <td class="text-center">
+        <label class="custom-switch">
+            <input class="custom-switch-input" type="checkbox" name="dle_sort[on]" value="1" {$checked}>
+            <span class="custom-switch-indicator"></span>
+        </label>
+    </td>
+</tr>
+<tr>
+    <td>
+        <h6>{$this->module_lang[41]}</h6>
+    </td>
+    <td class="text-center">
+HTML;
+    echo $this->selectForm([
+        "dle_sort_type[type]", 
+        [
+            2 => $this->module_lang[31],
+            3 => $this->module_lang[32]
+        ], 
+        true, 
+        $filter_block['dle_sort_type']['type']]
+    );
+    $checked = '';
+    if ($filter_block['dle_sort_type']['on'] == 1) {
+        $checked = 'checked';
+    }
+echo <<<HTML
+    </td>
+    <td class="text-center">
+        <label class="custom-switch">
+            <input class="custom-switch-input" type="checkbox" name="dle_sort_type[on]" value="1" {$checked}>
+            <span class="custom-switch-indicator"></span>
+        </label>
+    </td>
+</tr>
         </table>
 		<button type="submit" name="submit" class="btn btn-lg btn-success">{$this->module_lang['save']}</button>
 	</form>
 	<script>
 		$(function() {
-            
-			$("select[multiple]").chosen({allow_single_deselect:true, no_results_text: '{$this->module_lang[119]}', width: "300px"});
 			
 			function ajax_save_option() {
 				var data_form = $("form").serialize();

@@ -11,8 +11,8 @@ SliderInit();
 function UpdateFilter(data) {
 	$.each(data, function(key, value) {
 		$.each(value, function(key_val, val_value) {
-            if ($('[data-key='+key+'-'+key_val+']')) {
-				$('[data-key='+key+'-'+key_val+']').replaceWith(val_value);
+            if ($('[data-key="'+key+'-'+key_val+'"]')) {
+				$('[data-key="'+key+'-'+key_val+'"]').replaceWith(val_value);
 			}
 		});
 	});

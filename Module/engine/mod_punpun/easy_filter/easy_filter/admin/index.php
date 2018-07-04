@@ -13,7 +13,7 @@ Copyright (c) 2018 PunPun
 */
 
 if (!defined('DATALIFEENGINE') OR !defined('LOGGED_IN')) {
-	die("Hacking attempt!");
+	die("go your way stalker");
 }
 
 $module_name = 'easy_filter';

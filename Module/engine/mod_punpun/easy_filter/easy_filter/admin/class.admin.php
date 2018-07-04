@@ -11,8 +11,9 @@ Copyright (c) 2018 PunPun
 =====================================================
 Данный код защищен авторскими правами
 */
+
 if(!defined('DATALIFEENGINE') OR !defined('LOGGED_IN')) {
-	die("Hacking attempt!");
+	die("go your way stalker");
 }
 
 class AdminTemplate
@@ -99,13 +100,9 @@ echo <<<HTML
 			<link href="https://static.punpun.name/new_admin/assets/css/chosen.min.css" rel="stylesheet" />
 			<link href="https://static.punpun.name/new_admin/assets/css/toastr.min.css" rel="stylesheet" />
 			<link href="https://static.punpun.name/new_admin/assets/css/jquery.sweet-modal.min.css" rel="stylesheet" />
-            <link href="https://static.punpun.name/new_admin/assets/css/jquery.datetimepicker.min.css" rel="stylesheet" />
-
 			<script src="https://static.punpun.name/new_admin/assets/js/vendors/jquery-3.2.1.min.js"></script>
 			<script src="https://static.punpun.name/new_admin/assets/js/vendors/bootstrap.bundle.min.js"></script>
 			<script src="https://static.punpun.name/new_admin/assets/js/core.js"></script>
-            <script src="https://static.punpun.name/new_admin/assets/js/jquery.datetimepicker.full.min.js"></script>
-            <script src="https://static.punpun.name/new_admin/assets/js/select.js"></script>
 	</head>
 	<body>
 		<div class="page">
@@ -118,9 +115,9 @@ echo <<<HTML
 							</a>
 							<div class="d-flex order-lg-2 ml-auto">
 								<div class="nav-item d-none d-md-flex">
-									<a href="#" onclick="cache();return false;" class="btn btn-sm btn-outline-danger">{$this->module_lang['cache']}</a>&nbsp;&nbsp;
 									<a href="https://punpun.name/doc/easy-filter.html" class="btn btn-sm btn-outline-success" target="_blank">{$this->module_lang['header_doc']}</a>&nbsp;&nbsp;
-									<a href="{$PHP_SELF}?mod=options&action=options" class="btn btn-sm btn-outline-primary" target="_blank">{$this->module_lang['header_dle']}</a>
+									<a href="{$PHP_SELF}?mod=options&action=options" class="btn btn-sm btn-outline-primary" target="_blank">{$this->module_lang['header_dle']}</a>&nbsp;&nbsp;
+                                    <a href="{$this->dle_config['http_home_url']}" class="btn btn-sm btn-outline-dark" target="_blank">{$this->module_lang['site_link']}</a>
 								</div>
 								<div class="dropdown">
 									<a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">

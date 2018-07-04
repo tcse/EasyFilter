@@ -12,6 +12,8 @@ Copyright (c) 2018 PunPun
 Данный код защищен авторскими правами
 */
 
+defined('DATALIFEENGINE') || die("go your way stalker");
+
 $easy_filter_lang = [
     'name' => 'Easy Filter',
 	'header_profile' => 'Просмотр профиля',
@@ -40,6 +42,8 @@ $easy_filter_lang = [
 	'main_author' => 'Автор:',
 	'main_update' => 'Проверка обновления модуля',
 	
+    'site_link' => 'Просмотр сайта',
+    
     'error' => 'Ошибка',
     
     // Настройки
@@ -78,7 +82,8 @@ $easy_filter_lang = [
     37 => 'Тип',
     38 => 'Включить',
     39 => 'Категории',
-    
+    40 => 'Сортировка',
+    41 => 'Тип сортировки',
     
     // Другое
     24 => 'Успех',

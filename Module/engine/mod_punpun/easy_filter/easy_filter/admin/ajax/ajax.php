@@ -72,7 +72,15 @@ if ($action == 'cache') {
         $block_filter = [];
         foreach ($array_post as $key => $value) {
             if ($value['on'] == 1) {
-                $block_filter[$key] = ['type' => intval($value['type']), 'on' => 1];
+                if ($key == 'dle_sort') {
+                    $temp = [];
+                    foreach ($value['option'] as $val) {
+                        $temp[] = trim(strip_tags($val));
+                    }
+                    $block_filter[$key] = ['option' => $temp, 'type' => intval($value['type']), 'on' => 1];
+                } else {
+                    $block_filter[$key] = ['type' => intval($value['type']), 'on' => 1];
+                }
             }
         }
         

@@ -1,7 +1,7 @@
 <?php
 /*
 =====================================================
-Easy Filter 1.1
+Easy Filter 2.0.0
 -----------------------------------------------------
 Author: PunPun
 -----------------------------------------------------
@@ -159,65 +159,48 @@ foreach ($form_field as $val) {
 }
 
 $sort_by_const = [
-	"date",
-	"title",
-	"comm_num",
-	"news_read",
-	"autor",
-	"category",
-	"rating"
+	"p.date",
+	"e.editdate",
+	"e.rating",
+	"p.comm_num",
+	"e.news_read",
+	"p.title"
 ];
 
 function sortSqlFilter ($key, $value, $db, $form_field_arr, $sort_by_const)
 {
 	if ($key == 'order_by') {
-		$value = $db->safesql($value);
-		if (substr_count($value, 'dec_')) {
-			$order_by = substr_replace($value, '', 0, 4);
-			$order_by = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$order_by}|', -1), '||', 1))";
-		} elseif (substr_count($value, 'date_')) {
-			$order_by = substr_replace($value, '', 0, 5);
-			$order_by = intval($order_by);
-			$order_by = "AND date >= NOW() - INTERVAL {$order_by} DAY";
-		} elseif (in_array($value, $sort_by_const)) {
-			$order_by = $value;
-		} else {
-			$order_by = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$value}|', -1), '||', 1)";
-		}
-		
-		if ($form_field_arr['order'] && ($form_field_arr['order'] == 'asc' || $form_field_arr['order'] == 'desc')) {
-			$order_by .= ' ' . $form_field_arr['order'];
-		} else {
-			$order_by .= ' DESC';
-		}
-	} elseif ($key == 'order_by_one') {
-		$order_by_one = explode(";", $value);
-		
-		$order_by_one[0] = $db->safesql(trim($order_by_one[0]));
-		$order_by_one[1] = $db->safesql(trim($order_by_one[1]));
-		
-		if (substr_count($order_by_one[0], 'dec_')) {
-			$order_by = substr_replace($order_by_one[0], '', 0, 4);
-			$order_by = "ABS(SUBSTRING_INDEX( SUBSTRING_INDEX( xfields,  '{$order_by}|', -1 ) ,  '||', 1 ))";
-		} elseif (in_array($order_by_one[0], $sort_by_const)) {
-			$order_by = $order_by_one[0];
-		} else {
-			$order_by = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$order_by_one[0]}|', -1), '||', 1)";
-		}
-		
-		if ($order_by_one[1] && ($order_by_one[1] == 'asc' || $order_by_one[1] == 'desc')) {
-			$order_by .= ' ' . $order_by_one[1];
-		} else {
-			$order_by .= ' DESC';
-		}
+        if (!is_array($value)) {
+            $value = [$value];
+        }
+        $order_arr = [];
+        foreach ($value as $order) {
+            $order = $db->safesql($order);
+            if (substr_count($order, 'xf_')) {
+                $order_by = substr_replace($order, '', 0, 3);
+                $order_by = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$order_by}|', -1), '||', 1))";
+            } elseif (in_array($order, $sort_by_const)) {
+                $order_by = $order;
+            } else {
+                $order_by = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$order}|', -1), '||', 1)";
+            }
+            
+            if ($form_field_arr['order'] && ($form_field_arr['order'] == 'asc' || $form_field_arr['order'] == 'desc')) {
+                $order_by .= ' ' . $form_field_arr['order'];
+            } else {
+                $order_by .= ' DESC';
+            }
+            $order_arr[] = $order_by;
+        }
 	}
-	return $order_by;
+    
+	return implode(', ', $order_arr);
 }
 
-include ENGINE_DIR . '/mod_punpun/easy_filter/config/easy_filter_config.php';
+include ENGINE_DIR . '/mod_punpun/easy_filter/config/easy_filter.php';
 
 $form_field_arr_temp = $form_field_arr;
-$order_by = [];
+$order_by = '';
 $where = [];
 
 foreach ($form_field_arr as $key => &$value) {
@@ -226,15 +209,15 @@ foreach ($form_field_arr as $key => &$value) {
 	}
 	$key = $db->safesql($key);
 	if (is_array($value)) {
-		if ($key == 'order_by' || $key == 'order_by_one') {
-			$order_by[] = sortSqlFilter($key, $value, $db, $form_field_arr, $sort_by_const);
+		if ($key == 'order_by') {
+			$order_by = sortSqlFilter($key, $value, $db, $form_field_arr, $sort_by_const);
 		} else {
 			if ($key != 'order') {
 				foreach ($value as $index => &$val) {
 					$val = $db->safesql($val);
 					$xf_filter_arr[$key][] = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$key}|', -1), '||', 1) LIKE '%{$val}%'";
 				}
-				$where[] =  '(' . implode(' OR ', $xf_filter_arr[$key]) . ')';
+				$where[$key] =  '(' . implode(' OR ', $xf_filter_arr[$key]) . ')';
 			}
 		}
 	} elseif ($value != NULL && $value != "" && is_scalar($value)) {
@@ -244,14 +227,14 @@ foreach ($form_field_arr as $key => &$value) {
 				$value = explode(';', $value);
 				$value[1] = $db->safesql($value[1]);
 				$value[0] = $db->safesql($value[0]);
-				$where[] = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$key}|', -1 ), '||', 1))>={$value[0]} AND ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$key}|', -1), '||', 1))<={$value[1]}";
+				$where[$key] = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$key}|', -1 ), '||', 1))>={$value[0]} AND ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$key}|', -1), '||', 1))<={$value[1]}";
 			}
-		} elseif ($key == 'order_by' || $key == 'order_by_one') {
-			$order_by[] = sortSqlFilter($key, $value, $db, $form_field_arr, $sort_by_const);
+		} elseif ($key == 'order_by') {
+			$order_by = sortSqlFilter($key, $value, $db, $form_field_arr, $sort_by_const);
 		} else {
 			if ($key != 'order') {
 				$value = $db->safesql($value);
-				$where[] = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields,  '{$key}|', -1), '||', 1) LIKE '%{$value}%'";
+				$where[$key] = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields,  '{$key}|', -1), '||', 1) LIKE '%{$value}%'";
 			}
 		}
 	}
@@ -259,7 +242,7 @@ foreach ($form_field_arr as $key => &$value) {
 
 $where_all = [];
 
-if (trim($easy_filter_config['category']) != '') {
+if ($easy_filter_config['category']) {
 	if ($config['allow_multi_category']) {
 		$where[] = "category NOT REGEXP '[[:<:]](" . implode('|', $easy_filter_config['category']) . ")[[:>:]]'";
 		$where_all[] = "category NOT REGEXP '[[:<:]](" . implode('|', $easy_filter_config['category']) . ")[[:>:]]'";
@@ -281,7 +264,7 @@ if ($config['no_date'] && !$config['news_future']) {
 }
 
 if ($where) {
-	$where = ' AND ' . implode(' AND ', $where);
+	$where_sql = ' AND ' . implode(' AND ', $where);
 } else {
 	unset($where);
 }
@@ -290,12 +273,12 @@ $all_news = isset($_POST['all_news']) && intval($_POST['all_news']) > 0 ? intval
 $now_news = isset($_POST['now_news']) && intval($_POST['now_news']) > 0 ? intval($_POST['now_news']) : 0;
 
 if (!$all_news) {
-	$count_news = $db->super_query("SELECT COUNT(*) as count FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1'" . $where);
+	$count_news = $db->super_query("SELECT COUNT(*) as count FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1'" . $where_sql);
 	$all_news = $count_news['count'];
 }
 
 if ($order_by) {
-	$order_by_sql = ' ORDER BY ' . implode(', ', $order_by);
+	$order_by_sql = ' ORDER BY ' . $order_by;
 } elseif ($easy_filter_config['sort'] != '') {
 	$count_sort = count($easy_filter_config['sort']);
 	$sort_array = [];
@@ -313,7 +296,7 @@ if ($order_by) {
 }
 
 $easy_filter_config['options']['news_limit'] = intval($easy_filter_config['options']['news_limit']) > 0 ? intval($easy_filter_config['options']['news_limit']) : 10;
-$sql_result = $db->query("SELECT p.id, p.autor, p.date, p.short_story, p.full_story, p.xfields, p.title, p.category, p.alt_name, p.comm_num, p.allow_comm, p.fixed, p.tags, e.news_read, e.allow_rate, e.rating, e.vote_num, e.votes, e.view_edit, e.editdate, e.editor, e.reason FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' {$where} {$order_by_sql} LIMIT {$now_news},{$easy_filter_config['options']['news_limit']}");
+$sql_result = $db->query("SELECT p.id, p.autor, p.date, p.short_story, p.full_story, p.xfields, p.title, p.category, p.alt_name, p.comm_num, p.allow_comm, p.fixed, p.tags, e.news_read, e.allow_rate, e.rating, e.vote_num, e.votes, e.view_edit, e.editdate, e.editor, e.reason FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_post_extras e ON (p.id=e.news_id) WHERE approve='1' {$where_sql} {$order_by_sql} LIMIT {$now_news},{$easy_filter_config['options']['news_limit']}");
 
 $now_news = $now_news != 0 ? $now_news + $easy_filter_config['options']['news_limit'] : 0;
 

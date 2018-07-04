@@ -13,7 +13,7 @@ Copyright (c) 2018 PunPun
 */
 
 if (!defined('DATALIFEENGINE') OR !defined('LOGGED_IN')) {
-	die("Hacking attempt!");
+	die("go your way stalker");
 }
 
 $all_xfield = xfieldsload();
@@ -47,8 +47,7 @@ tr > td:nth-child(2) > div {
 }
 </style>
 	<form method="post" class="card">
-        <div id="option_block_1">
-            <table class="table table-striped">
+        <table class="table table-striped">
 HTML;
 $this->showTr(
 	$this->module_lang[0],
