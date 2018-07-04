@@ -217,7 +217,7 @@ foreach ($form_field_arr as $key => &$value) {
 					$val = $db->safesql($val);
 					$xf_filter_arr[$key][] = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$key}|', -1), '||', 1) LIKE '%{$val}%'";
 				}
-				$where[$key] =  '(' . implode(' OR ', $xf_filter_arr[$key]) . ')';
+				$where[$key] =  '(' . implode(' AND ', $xf_filter_arr[$key]) . ')';
 			}
 		}
 	} elseif ($value != NULL && $value != "" && is_scalar($value)) {
