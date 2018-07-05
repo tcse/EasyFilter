@@ -131,63 +131,63 @@ if ($filter_block['dle_sort_type']) {
     unset($filter_block['dle_sort_type']);
 }
 
-foreach ($xf as $index => $value) {
-    if ($filter_block[$value[0]]['type'] == 5 && $where) {
+foreach ($filter_block as $index => $value) {
+    if ($value['type'] == 5 && $where) {
         continue;
     }
     
-    if ($filter_block[$value[0]]['on'] == 1) {
+    if ($value['on'] == 1) {
         $temp_block = $block_design;
-        $temp_block = str_replace('{name}', $value[1], $temp_block);
+        $temp_block = str_replace('{name}', $xfield_sort['xf_' . $index], $temp_block);
         
-        if ($filter_block[$value[0]]['type'] == 4) {
+        if ($value['type'] == 4) {
             $temp_design = $design_form[3];
             $temp_design = str_replace('{multiple}', 'multiple', $temp_design);
         } else {
-            $temp_design = $design_form[$filter_block[$value[0]]['type']];
-            if ($filter_block[$value[0]]['type'] == 3) {
+            $temp_design = $design_form[$value['type']];
+            if ($value['type'] == 3) {
                 $temp_design = str_replace('{multiple}', '', $temp_design);
             }
         }
         
-        $temp_design = str_replace('{name}', $value[0], $temp_design);
+        $temp_design = str_replace('{name}', $index, $temp_design);
         preg_match("#\\[value\\](.+?)\\[\\/value\\]#i", $temp_design, $value_form);
         $temp_design = str_replace($value_form[0], '', $temp_design);
         
         $value_form = $value_form[1];
     }
     
-    if ($filter_block[$value[0]]['type'] == 5) {
-        $value_form = str_replace(["{min}", "{max}"], [min($xf_data[$value[0]]), max($xf_data[$value[0]])], $value_form);
-        unset($xf_data[$value[0]]);
-        $xf_data[$value[0]][] = str_replace('{key}', $value[0], $value_form);
+    if ($value['type'] == 5) {
+        $value_form = str_replace(["{min}", "{max}"], [min($xf_data[$index]), max($xf_data[$index])], $value_form);
+        unset($xf_data[$index]);
+        $xf_data[$index][] = str_replace('{key}', $index, $value_form);
     } else {
-        array_walk($xf_data[$value[0]], function(&$item, $key) use($value_form, $value, &$xf_count, $xf_count_sort, $xf_count_sort_radio, $form_field_arr_temp, $where, &$js_form, $filter_block)
+        array_walk($xf_data[$index], function(&$item, $key) use($value_form, $index, &$xf_count, $xf_count_sort, $xf_count_sort_radio, $form_field_arr_temp, $where, &$js_form, $filter_block)
         {
             $key_count = mb_strtolower(trim($item), "UTF-8");
             $disabled = '';
             
-            if (($filter_block[$value[0]]['type'] == 2 || $filter_block[$value[0]]['type'] == 3) && $xf_count_sort_radio[$value[0]][$key_count]) {
-                $xf_count_sort[$value[0]][$key_count] = $xf_count_sort_radio[$value[0]][$key_count];
+            if (($filter_block[$index]['type'] == 2 || $filter_block[$index]['type'] == 3) && $xf_count_sort_radio[$index][$key_count]) {
+                $xf_count_sort[$index][$key_count] = $xf_count_sort_radio[$index][$key_count];
             }
             
-            if (!$xf_count_sort[$value[0]][$key_count] && $xf_count[$value[0]][$key_count] > 0 && $xf_count_sort) {
+            if (!$xf_count_sort[$index][$key_count] && $xf_count[$index][$key_count] > 0 && $xf_count_sort) {
                 $disabled = 'disabled';
-                $xf_count[$value[0]][$key_count] = 0;
+                $xf_count[$index][$key_count] = 0;
             } else {
-                if ($xf_count_sort[$value[0]][$key_count] && $xf_count_sort[$value[0]][$key_count] < $xf_count[$value[0]][$key_count]) {
-                    $xf_count[$value[0]][$key_count] = $xf_count_sort[$value[0]][$key_count];
-                } elseif ($xf_count_sort && !$xf_count_sort[$value[0]][$key_count]) {
-                    $xf_count[$value[0]][$key_count] = 0;
+                if ($xf_count_sort[$index][$key_count] && $xf_count_sort[$index][$key_count] < $xf_count[$index][$key_count]) {
+                    $xf_count[$index][$key_count] = $xf_count_sort[$index][$key_count];
+                } elseif ($xf_count_sort && !$xf_count_sort[$index][$key_count]) {
+                    $xf_count[$index][$key_count] = 0;
                 } elseif (!$xf_count_sort && $where) {
-                    $xf_count[$value[0]][$key_count] = 0;
+                    $xf_count[$index][$key_count] = 0;
                 }
-                $disabled = $xf_count[$value[0]][$key_count]>0 ? '' : 'disabled';
+                $disabled = $xf_count[$index][$key_count]>0 ? '' : 'disabled';
             }
 
             $check_value = '';
             if ($xf_count_sort) {
-                $check_item = explode(',', $form_field_arr_temp[$value[0]]);
+                $check_item = explode(',', $form_field_arr_temp[$index]);
                 
                 $check_item = array_flip($check_item);
                 if (isset($check_item[$item]) && !$disabled) {
@@ -197,12 +197,12 @@ foreach ($xf as $index => $value) {
             
             $item_temp = $item;
             $item = preg_replace("#\\[check\\](.*?)\\[/check\\]#is", $check_value, $value_form);
-            $item = str_replace(['{value}', '{key}', '{count}', '{disabled}'], [$item_temp, $value[0], $xf_count[$value[0]][$key_count], $disabled], $item);
-            $js_form[$value[0]][$item_temp] = $item;
+            $item = str_replace(['{value}', '{key}', '{count}', '{disabled}'], [$item_temp, $index, $xf_count[$index][$key_count], $disabled], $item);
+            $js_form[$index][$item_temp] = $item;
         });
     }
     
-    $temp_design = str_replace("{value}", implode($xf_data[$value[0]]), $temp_design);
+    $temp_design = str_replace("{value}", implode($xf_data[$index]), $temp_design);
     $block_filter .= str_replace("{value}", $temp_design, $temp_block);
 }
 

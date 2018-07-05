@@ -1,16 +1,9 @@
-function SliderInit() {
-	$(function() {
-		$("[name*=slider]").ionRangeSlider({
-            grid: true,
-            grid_num: 2
-        });
-	});
-}
-SliderInit();
-
-function UpdateFilter(data) {
-	$.each(data, function(key, value) {
-		$.each(value, function(key_val, val_value) {
+function UpdateFilter(data)
+{
+	$.each(data, function(key, value)
+    {
+		$.each(value, function(key_val, val_value)
+        {
             if ($('[data-key="'+key+'-'+key_val+'"]')) {
 				$('[data-key="'+key+'-'+key_val+'"]').replaceWith(val_value);
 			}
@@ -20,11 +13,22 @@ function UpdateFilter(data) {
 
 var now_news, all_news, limit;
 
-$(function() {
+$(function()
+{
+    var slider = $("[name*=slider]");
+
+    slider.ionRangeSlider(
+    {
+        grid: true,
+        grid_num: 2
+    });
+    
 	var news = $("#dle-content").html();
-	$("body").on("change", "#punpun_filter", function() {
+	$("body").on("change", "#punpun_filter", function()
+    {
 		var filter = $("#punpun_filter").serialize();
-		$.post(dle_root + "engine/mod_punpun/easy_filter/ajax/easy_filter.php", {form_field : filter}, function(data) {
+		$.post(dle_root + "engine/mod_punpun/easy_filter/ajax/easy_filter.php", {form_field : filter}, function(data)
+        {
 			if(data) {
 				var content = jQuery.parseJSON(data);
 				UpdateFilter(content.js_form);
@@ -41,12 +45,14 @@ $(function() {
 		});
 	});
 	
-	$("body").on("click", "#bottom-nav", function() {
+	$("body").on("click", "#bottom-nav", function()
+    {
 		var filter = $("#punpun_filter").serialize();
 		if (now_news == 0) {
 			now_news = limit;
 		}
-		$.post(dle_root + "engine/mod_punpun/easy_filter/ajax/easy_filter.php", {form_field: filter, all_news: all_news, now_news: now_news}, function(data) {
+		$.post(dle_root + "engine/mod_punpun/easy_filter/ajax/easy_filter.php", {form_field: filter, all_news: all_news, now_news: now_news}, function(data)
+        {
 			if(data) {
 				var content = jQuery.parseJSON(data);
 				all_news = content.all_news;
@@ -61,7 +67,8 @@ $(function() {
 		});
 	});
 	
-	$(".filter-box select").chosen({
+	$(".filter-box select").chosen(
+    {
 		disable_search_threshold: 100,
 		allow_single_deselect: true
 	});
