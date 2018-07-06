@@ -1,6 +1,6 @@
 # Easy Filter
 [![Documentation](https://img.shields.io/badge/Documentation-Link-blue.svg?style=flat-square)](https://punpun.name/doc/easy-filter.html)
-![version](https://img.shields.io/badge/version-2.0.0-green.svg?style=flat-square "Version")
+![version](https://img.shields.io/badge/version-2.0.2-green.svg?style=flat-square "Version")
 ![DLE](https://img.shields.io/badge/DLE-13.x-red.svg?style=flat-square "DLE Version")
 [![CC BY-NC-SA License](https://img.shields.io/badge/license-CC_BY--NC--SA_3.0-blue.svg?style=flat-square)](https://github.com/punpun1/EasyFilter/blob/master/LICENSE)
 
