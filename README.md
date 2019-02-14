@@ -10,6 +10,39 @@
 * Поддерживаемая кодировка: UTF-8
 * Версия php: 5.4 и выше
 
+# Установка модуля Easy Filter
+1. Загрузить архив с модулем через меню Утилиты - Управления плагинами.
+2. В шаблоне сайта **main.tpl** перед тегом 
+
+  </head>
+  
+вставить: 
+
+  <link rel="stylesheet" href="{THEME}/mod_punpun/easy_filter/css/easy_filter.css">
+  
+и перед тегом:
+ 
+  </body>
+  
+вставить:   
+
+  <script src="{THEME}/mod_punpun/easy_filter/js/easy_filter.js"></script>
+
+
+Далеее  в месте вывода фильтра в шаблон добавить код: 
+
+  <form id="punpun_filter">
+      <div class="filter-wrap" id="filter-wrap">
+          <div class="filter-box">
+              {include file="engine/mod_punpun/easy_filter/site/filter.php"}
+          </div>
+      </div>
+  </form>
+
+
+3. В админке модуля /admin.php?mod=easy_filter активируйте вывод необходимых полей.
+
+
 # Лицензия:
 Данное программное обеспечение издается по лицензии CC Attribution — Noncommercial — Share Alike.<br/>
 <b>Вы можете свободно:</b><ul><li>Делиться (обмениваться) — копировать и распространять материал на любом носителе и в любом формате</li>
