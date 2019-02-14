@@ -14,30 +14,30 @@
 1. Загрузить архив с модулем через меню Утилиты - Управления плагинами.
 2. В шаблоне сайта **main.tpl** перед тегом 
 
-  </head>
+		</head>
   
 вставить: 
 
-  <link rel="stylesheet" href="{THEME}/mod_punpun/easy_filter/css/easy_filter.css">
+		<link rel="stylesheet" href="{THEME}/mod_punpun/easy_filter/css/easy_filter.css">
   
 и перед тегом:
  
-  </body>
+		</body>
   
 вставить:   
 
-  <script src="{THEME}/mod_punpun/easy_filter/js/easy_filter.js"></script>
+		<script src="{THEME}/mod_punpun/easy_filter/js/easy_filter.js"></script>
 
 
 Далеее  в месте вывода фильтра в шаблон добавить код: 
 
-  <form id="punpun_filter">
-      <div class="filter-wrap" id="filter-wrap">
-          <div class="filter-box">
-              {include file="engine/mod_punpun/easy_filter/site/filter.php"}
-          </div>
-      </div>
-  </form>
+	<form id="punpun_filter">
+			<div class="filter-wrap" id="filter-wrap">
+					<div class="filter-box">
+							{include file="engine/mod_punpun/easy_filter/site/filter.php"}
+					</div>
+			</div>
+	</form>
 
 
 3. В админке модуля /admin.php?mod=easy_filter активируйте вывод необходимых полей.
